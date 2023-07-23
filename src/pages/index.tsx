@@ -13,7 +13,9 @@ export default function Main() {
 
   function cumulateNumbers(input: Row[]) {
     return input.reduce((prevState, currentState) => {
-      if (currentState?.[0].length < 4) return prevState;
+      if (typeof currentState?.[0] !== "number") return prevState;
+
+      if (String(currentState?.[0]).length < 4) return prevState;
 
       if (prevState?.[currentState?.[0]])
         return {
@@ -44,6 +46,7 @@ export default function Main() {
     readXlsxFile(file)
       .then(cumulateNumbers)
       .then((response) => {
+        //@ts-ignore
         writeXlsxFile([HEADER_ROW, ...transformResultShape(response)], {
           fileName: "result.xlsx",
         });
