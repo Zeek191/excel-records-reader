@@ -7,8 +7,8 @@ import readXlsxFile, { Row } from "read-excel-file";
 import writeXlsxFile from "write-excel-file";
 
 export default function SumRecordsPage() {
+  const [file, setFile] = useState<File>();
   const [outputFileName, setOutputFileName] = useState<string>("result");
-  const [fileName, setFileName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   function changeOutputFileNameHandler(e: ChangeEvent<HTMLInputElement>) {
@@ -48,7 +48,7 @@ export default function SumRecordsPage() {
     ]);
   }
 
-  function generateFile(file?: File) {
+  function generateFile() {
     if (!file) return null;
 
     readXlsxFile(file)
@@ -63,13 +63,7 @@ export default function SumRecordsPage() {
 
   useEffect(() => {
     function changeHandler() {
-      const file =
-        inputRef.current?.files?.[inputRef.current?.files.length - 1];
-
-      if (file) {
-        setFileName(file?.name);
-        generateFile(file);
-      }
+      setFile(inputRef.current?.files?.[inputRef.current?.files.length - 1]);
     }
 
     if (inputRef.current) {
@@ -98,10 +92,15 @@ export default function SumRecordsPage() {
             type="text"
             label="Loaded file name"
             disabled
-            value={fileName}
+            value={file?.name}
           />
 
-          <Button onClick={clickInput}>Sumarize records</Button>
+          <div className="grid gap-x-2 grid-cols-2">
+            <Button onClick={clickInput}>Load file</Button>
+            <Button onClick={generateFile} disabled={!file?.name}>
+              Export file
+            </Button>
+          </div>
         </div>
       </Wrapper>
     </Wrapper>
